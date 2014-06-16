@@ -1,0 +1,11 @@
+these scripts were written to automating invalidating 600,000 paths in
+cloudfront.
+
+You start with a file containing the filenames; invalidation_filenames.txt
+
+You run the ./splitter to chop it up into batches of 1000 (cloudfront will only
+	do 1000 at a time)
+
+You run the ./invalidater.py in a screen session or something and let it go. It
+	will take a while (for the 600,000 it took like 30hrs).
+

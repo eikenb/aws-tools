@@ -1,0 +1,58 @@
+#!/usr/bin/python
+
+"""
+This script will add your current IP to the security group for all ports. It
+then waits for a key-press and proceeds to delete the IP from the security
+group. This lets you grant yourself access temporarily from home without
+leaving your (possibly changing) IP everywhere.
+
+It requires AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
+to be set or boto config files in place.
+"""
+
+from __future__ import print_function
+import os, os.path, time, subprocess
+import argparse
+import boto, boto.ec2
+
+regions = {
+        'euw1':'eu-west-1',
+        'aps1':'ap-southeast-1', 'aps2':'ap-southeast-2',
+        'apn1':'ap-northeast-1',
+        'sae1':'sa-east-1',
+        'use1':'us-east-1', 'usw1':'us-west-1', 'usw2':'us-west-2' }
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("region", type=str, nargs='?',
+        default='usw2', choices=regions.keys())
+parser.add_argument("security_groups", type=str, nargs='+')
+args = parser.parse_args()
+#print(args)
+
+myip = subprocess.check_output(['curl', '-s' ,'icanhazip.com']).strip()+"/32"
+
+try:
+    ec2 = boto.ec2.connect_to_region(regions[args.region])
+except boto.exception.NoAuthHandlerFound:
+    parser.error("AWS credential environment variables not set.")
+
+try:
+    security_groups = ec2.get_all_security_groups(args.security_groups)
+except boto.exception.EC2ResponseError:
+    parser.error("One of your security groups doesn't exist.")
+
+groups = (', ').join(args.security_groups)
+print("Adding %s too %s in %s..." % (myip, groups, args.region))
+for sg in security_groups:
+    try:
+        sg.authorize('tcp', 0, 65535, myip)
+    except boto.exception.EC2ResponseError:
+        pass
+
+raw_input("Press any key to continue and remove %s from %s..." %
+        (myip, groups))
+
+print("Removing %s from security groups..." % myip)
+for sg in security_groups:
+    sg.revoke('tcp', 0, 65535, myip)
+
+

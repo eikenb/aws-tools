@@ -1,0 +1,5 @@
+#!/bin/sh
+
+mkdir -p to-be-processed
+cd to-be-processed
+split -a4 -d --lines=1000 ../invalidation_filenames.txt
