@@ -36,7 +36,8 @@ except boto.exception.NoAuthHandlerFound:
     parser.error("AWS credential environment variables not set.")
 
 try:
-    security_groups = ec2.get_all_security_groups(args.security_groups)
+    security_groups = ec2.get_all_security_groups(
+            filters={'group-name': args.security_groups})
 except boto.exception.EC2ResponseError:
     parser.error("One of your security groups doesn't exist.")
 
