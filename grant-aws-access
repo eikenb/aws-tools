@@ -15,15 +15,18 @@ import os, os.path, time, urllib2
 import argparse
 import boto, boto.ec2
 
+DEFAULT_REGION='usw2' # change to what works best for you
+
 regions = {
         'euw1':'eu-west-1',
         'aps1':'ap-southeast-1', 'aps2':'ap-southeast-2',
         'apn1':'ap-northeast-1',
         'sae1':'sa-east-1',
         'use1':'us-east-1', 'usw1':'us-west-1', 'usw2':'us-west-2' }
+
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("region", type=str, nargs='?',
-        default='usw2', choices=regions.keys())
+        default=DEFAULT_REGION, choices=regions.keys())
 parser.add_argument("security_groups", type=str, nargs='+')
 args = parser.parse_args()
 #print(args)
