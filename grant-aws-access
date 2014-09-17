@@ -28,6 +28,10 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("region", type=str, nargs='?',
         default=DEFAULT_REGION, choices=regions.keys())
 parser.add_argument("security_groups", type=str, nargs='+')
+parser.add_argument('-a', '--add', action='store_true', dest='add_and_exit',
+        help='add rule and exit')
+parser.add_argument('-d', '--del', action='store_true', dest='del_and_exit',
+        help='remove rule and exit')
 args = parser.parse_args()
 #print(args)
 
@@ -45,18 +49,21 @@ except boto.exception.EC2ResponseError:
     parser.error("One of your security groups doesn't exist.")
 
 groups = (', ').join(args.security_groups)
-print("Adding %s too %s in %s..." % (myip, groups, args.region))
-for sg in security_groups:
-    try:
-        sg.authorize('tcp', 0, 65535, myip)
-    except boto.exception.EC2ResponseError:
-        pass
+if not args.del_and_exit:
+    print("Adding %s too %s in %s..." % (myip, groups, args.region))
+    for sg in security_groups:
+        try:
+            sg.authorize('tcp', 0, 65535, myip)
+        except boto.exception.EC2ResponseError:
+            pass
 
-raw_input("Press any key to continue and remove %s from %s..." %
+if not args.add_and_exit and not args.del_and_exit:
+    raw_input("Press any key to continue and remove %s from %s..." %
         (myip, groups))
 
-print("Removing %s from security groups..." % myip)
-for sg in security_groups:
-    sg.revoke('tcp', 0, 65535, myip)
+if not args.add_and_exit:
+    print("Removing %s from security groups..." % myip)
+    for sg in security_groups:
+        sg.revoke('tcp', 0, 65535, myip)
 
 
