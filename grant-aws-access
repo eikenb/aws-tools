@@ -11,7 +11,7 @@ to be set or boto config files in place.
 """
 
 from __future__ import print_function
-import os, os.path, time, subprocess
+import os, os.path, time, urllib2
 import argparse
 import boto, boto.ec2
 
@@ -28,7 +28,7 @@ parser.add_argument("security_groups", type=str, nargs='+')
 args = parser.parse_args()
 #print(args)
 
-myip = subprocess.check_output(['curl', '-s' ,'icanhazip.com']).strip()+"/32"
+myip = urllib2.urlopen("http://icanhazip.com").read().strip()+"/32"
 
 try:
     ec2 = boto.ec2.connect_to_region(regions[args.region])
