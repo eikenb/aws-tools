@@ -29,9 +29,9 @@ parser.add_argument("region", type=str, nargs='?',
         default=DEFAULT_REGION, choices=regions.keys())
 parser.add_argument("security_groups", type=str, nargs='+')
 parser.add_argument('-a', '--add', action='store_true', dest='add_and_exit',
-        help='add rule and exit')
+        help='add rule and exit (for scripting)')
 parser.add_argument('-d', '--del', action='store_true', dest='del_and_exit',
-        help='remove rule and exit')
+        help='remove rule and exit (for scripting)')
 args = parser.parse_args()
 #print(args)
 
