@@ -58,7 +58,7 @@ if not args.del_and_exit:
             pass
 
 if not args.add_and_exit and not args.del_and_exit:
-    raw_input("Press any key to continue and remove %s from %s..." %
+    raw_input("Press any key to remove %s from %s..." %
         (myip, groups))
 
 if not args.add_and_exit:
