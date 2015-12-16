@@ -70,7 +70,7 @@ def openConsole(incognito=False):
             "Session": json_temp_credentials,
     }
     request_url = "https://signin.aws.amazon.com/federation"
-    r = requests.get(request_url, params=params, verify=False)
+    r = requests.get(request_url, params=params)
 
     # The return value from the federation endpoint, the token.
     sign_in_token = json.loads(r.text)["SigninToken"]
