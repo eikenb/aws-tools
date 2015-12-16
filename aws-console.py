@@ -5,9 +5,10 @@
 # Requires base python install + requests module.
 # http://docs.python-requests.org/en/latest/
 
-import requests
 import argparse
 import json
+import os
+import requests
 import webbrowser
 import boto.iam
 from boto.sts import STSConnection
@@ -35,6 +36,9 @@ def parseArgs():
 def accountId():
     """ Return account-id based on credentials in environment.
     """
+    # save the lookup if we set the account to the environment
+    if os.environ.has_key("AWS_ACCOUNT_ID"):
+        return os.environ["AWS_ACCOUNT_ID"]
     conn = boto.iam.connect_to_region("us-east-1")
     arn = conn.get_user().get('get_user_response')\
             .get('get_user_result').get('user').get('arn')
