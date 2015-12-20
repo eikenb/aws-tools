@@ -28,9 +28,9 @@ def parseArgs():
     parser = argparse.ArgumentParser("Open " +
             browser_name + " to AWS console of account based on credentials.")
     # only chrom{e,ium} support incognito mode
-    if browser_name.startswith('chrom'):
-        parser.add_argument('-i', '--incognito', action='store_true',
-                help='Open chrome in incognito mode')
+    parser.add_argument('-i', '--incognito', action='store_true',
+            help='Open browser in incognito/private mode.')
+
     return parser.parse_args()
 
 def accountId():
@@ -94,10 +94,12 @@ def openConsole(incognito=False):
     # generated URL.
     browser = webbrowser.get()
     if incognito:
-        browser.raise_opts = ["", "--incognito"]
+        webbrowser.Chromium.raise_opts = ["", "--incognito"]
+        webbrowser.Chrome.raise_opts = ["", "--incognito"]
+        webbrowser.Mozilla.remote_args = ['--private-window', '%s']
     browser.open(request_url, new=1)
 
-if __name__=="__main__":
+if __name__ == "__main__":
     args = parseArgs()
     openConsole(getattr(args, 'incognito', False))
 
