@@ -5,6 +5,8 @@
 # Requires base python install + requests module.
 # http://docs.python-requests.org/en/latest/
 
+from __future__ import print_function
+
 import argparse
 import json
 import os
@@ -19,7 +21,6 @@ urlencode = getattr(urllib, 'parse', urllib).urlencode
 
 # Requires this role to exist.
 ROLE_NAME = "StsConsoleAccess"
-# see ./add-sts-console-w-api/ for script to create this role using the API
 
 def parseArgs():
     """ Do the argument parsing and return arg dict.
@@ -27,11 +28,15 @@ def parseArgs():
     browser_name = webbrowser.get().name
     parser = argparse.ArgumentParser("Open " +
             browser_name + " to AWS console of account based on credentials.")
-    # only chrom{e,ium} support incognito mode
     parser.add_argument('-i', '--incognito', action='store_true',
-            help='Open browser in incognito/private mode.')
+            help='open browser in incognito/private mode.')
     parser.add_argument('-r', '--region', action='store', default='us-west-2',
-            help='Region for region-specific commands (default: us-west-2).')
+            help='region for region-specific commands (us-west-2)')
+    parser.add_argument('-c', '--create-role', action='store_true',
+            help="create required role in account if it doesn't exist")
+    parser.add_argument('-n', '--role-name', action='store',
+            default=ROLE_NAME,
+            help="name of required role to create/use (" + ROLE_NAME + ")")
 
     return parser.parse_args()
 
@@ -69,7 +74,7 @@ def hasRole():
     """
     conn = iamConn()
     try:
-        conn.get_role(ROLE_NAME)
+        conn.get_role(getArgs().role_name)
         return True
     except boto.exception.BotoServerError:
         return False
@@ -106,14 +111,16 @@ def createRole():
     """
     if hasRole(): return
     conn = iamConn()
-    conn.create_role(ROLE_NAME, assume_role_policy.strip().format(accountId()))
-    conn.put_role_policy(ROLE_NAME, 'Admin', admin_policy.strip())
+    role = getArgs().role_name
+    conn.create_role(role, assume_role_policy.strip().format(accountId()))
+    conn.put_role_policy(role, 'Admin', admin_policy.strip())
+    print("Role created:", role)
 
 def openConsole():
     """ Get STS token and open AWS console.
     """
     # Create an ARN out of the information provided by the user.
-    role_arn = "arn:aws:iam::" + accountId() + ":role/" + ROLE_NAME
+    role_arn = "arn:aws:iam::" + accountId() + ":role/" + getArgs().role_name
 
     # Connect to AWS STS and then call AssumeRole.
     # Returns temporary security credentials.
@@ -164,5 +171,8 @@ def openConsole():
     browser.open(request_url, new=1)
 
 if __name__ == "__main__":
-    openConsole()
+    if getArgs().create_role:
+        createRole()
+    else:
+        openConsole()
 
