@@ -30,6 +30,8 @@ def parseArgs():
     # only chrom{e,ium} support incognito mode
     parser.add_argument('-i', '--incognito', action='store_true',
             help='Open browser in incognito/private mode.')
+    parser.add_argument('-r', '--region', action='store', default='us-west-2',
+            help='Region for region-specific commands (default: us-west-2).')
 
     return parser.parse_args()
 
@@ -47,7 +49,8 @@ def accountId():
     # save the lookup if we set the account to the environment
     if os.environ.has_key("AWS_ACCOUNT_ID"):
         return os.environ["AWS_ACCOUNT_ID"]
-    conn = boto.iam.connect_to_region("us-east-1")
+    region = getArgs().region
+    conn = boto.iam.connect_to_region(region)
     arn = conn.get_user().get('get_user_response')\
             .get('get_user_result').get('user').get('arn')
     return arn.split(':')[4]
