@@ -35,13 +35,23 @@ def parseArgs():
 
     return parser.parse_args()
 
-_cache = []
+_arg_cache = []
 def getArgs():
     """ Return ArgumentParser Namespace instance for parsed arguments.
     """
-    if not _cache:
-        _cache.append(parseArgs())
-    return _cache[0]
+    cache = _arg_cache
+    if not cache:
+        cache.append(parseArgs())
+    return cache[0]
+
+_conn_cache = []
+def iamConn():
+    """
+    """
+    cache = _conn_cache
+    if not cache:
+        cache.append(boto.iam.connect_to_region(getArgs().region))
+    return cache[0]
 
 def accountId():
     """ Return account-id based on credentials in environment.
@@ -49,8 +59,7 @@ def accountId():
     # save the lookup if we set the account to the environment
     if os.environ.has_key("AWS_ACCOUNT_ID"):
         return os.environ["AWS_ACCOUNT_ID"]
-    region = getArgs().region
-    conn = boto.iam.connect_to_region(region)
+    conn = iamConn()
     arn = conn.get_user().get('get_user_response')\
             .get('get_user_result').get('user').get('arn')
     return arn.split(':')[4]
@@ -58,7 +67,7 @@ def accountId():
 def hasRole():
     """ Does AWS account have the role for STS/assume-role?
     """
-    conn = boto.iam.connect_to_region(getArgs().region)
+    conn = iamConn()
     try:
         conn.get_role(ROLE_NAME)
         return True
@@ -96,7 +105,7 @@ def createRole():
     """ Create STS/assume-role policy and role.
     """
     if hasRole(): return
-    conn = boto.iam.connect_to_region(getArgs().region)
+    conn = iamConn()
     conn.create_role(ROLE_NAME, assume_role_policy.strip().format(accountId()))
     conn.put_role_policy(ROLE_NAME, 'Admin', admin_policy.strip())
 
