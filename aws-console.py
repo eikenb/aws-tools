@@ -55,6 +55,50 @@ def accountId():
             .get('get_user_result').get('user').get('arn')
     return arn.split(':')[4]
 
+def hasRole():
+    """ Does AWS account have the role for STS/assume-role?
+    """
+    conn = boto.iam.connect_to_region(getArgs().region)
+    try:
+        conn.get_role(ROLE_NAME)
+        return True
+    except boto.exception.BotoServerError:
+        return False
+
+# json strings used in createRole()
+admin_policy = """
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "*",
+            "Resource": "*"
+        }
+    ]
+}"""
+assume_role_policy = """
+{{
+  "Version": "2012-10-17",
+  "Statement": [
+    {{
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {{
+        "AWS": "arn:aws:iam::{0}:root"
+      }},
+      "Action": "sts:AssumeRole"
+    }}
+  ]
+}}"""
+
+def createRole():
+    """ Create STS/assume-role policy and role.
+    """
+    if hasRole(): return
+    conn = boto.iam.connect_to_region(getArgs().region)
+    conn.create_role(ROLE_NAME, assume_role_policy.strip().format(accountId()))
+    conn.put_role_policy(ROLE_NAME, 'Admin', admin_policy.strip())
 
 def openConsole():
     """ Get STS token and open AWS console.
