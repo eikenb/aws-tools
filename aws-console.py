@@ -33,6 +33,14 @@ def parseArgs():
 
     return parser.parse_args()
 
+_cache = []
+def getArgs():
+    """ Return ArgumentParser Namespace instance for parsed arguments.
+    """
+    if not _cache:
+        _cache.append(parseArgs())
+    return _cache[0]
+
 def accountId():
     """ Return account-id based on credentials in environment.
     """
@@ -45,7 +53,7 @@ def accountId():
     return arn.split(':')[4]
 
 
-def openConsole(incognito=False):
+def openConsole():
     """ Get STS token and open AWS console.
     """
     # Create an ARN out of the information provided by the user.
@@ -93,13 +101,12 @@ def openConsole(incognito=False):
     # Use the default browser to sign in to the console using the
     # generated URL.
     browser = webbrowser.get()
-    if incognito:
+    if getArgs().incognito:
         webbrowser.Chromium.raise_opts = ["", "--incognito"]
         webbrowser.Chrome.raise_opts = ["", "--incognito"]
         webbrowser.Mozilla.remote_args = ['--private-window', '%s']
     browser.open(request_url, new=1)
 
 if __name__ == "__main__":
-    args = parseArgs()
-    openConsole(getattr(args, 'incognito', False))
+    openConsole()
 
