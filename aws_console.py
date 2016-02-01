@@ -26,7 +26,7 @@ def parseArgs():
     """ Do the argument parsing and return arg dict.
     """
     browser_name = webbrowser.get().name
-    parser = argparse.ArgumentParser("Open " +
+    parser = argparse.ArgumentParser(description="Open " +
             browser_name + " to AWS console of account based on credentials.")
     parser.add_argument('-i', '--incognito', action='store_true',
             help='open browser in incognito/private mode.')
