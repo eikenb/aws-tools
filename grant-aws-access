@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
 """
+Author: John Eikenberry <jae@zhar.net>
+License: CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
+
 This script will add your current IP to the security group for all ports. It
 then waits for a key-press and proceeds to delete the IP from the security
 group. This lets you grant yourself access temporarily from home without
@@ -11,7 +14,7 @@ to be set or boto config files in place.
 """
 
 from __future__ import print_function
-import os, os.path, time, urllib2
+import urllib2
 import argparse
 import boto, boto.ec2
 

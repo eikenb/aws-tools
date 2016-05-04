@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
-# Python 2 and Python 3 compatible.
+"""
+Author: John Eikenberry <jae@zhar.net>
+License: CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
 
-# Requires base python install + requests module.
-# http://docs.python-requests.org/en/latest/
+Python 2 and Python 3 compatible.
+
+Requires base python install + requests module.
+http://docs.python-requests.org/en/latest/
+"""
 
 from __future__ import print_function
 
