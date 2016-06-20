@@ -32,7 +32,8 @@ def parseArgs():
     """
     browser_name = webbrowser.get().name
     parser = argparse.ArgumentParser(description="Open " +
-            browser_name + " to AWS console of account based on credentials.")
+            browser_name + " to AWS console of account based on credentials." +
+            " Credentials should be stored in standard environment variables.")
     parser.add_argument('-i', '--incognito', action='store_true',
             help='open browser in incognito/private mode.')
     parser.add_argument('-r', '--region', action='store', default='us-west-2',
