@@ -1,11 +1,5 @@
 Collection of small tools for use with AWS. Added here to enable sharing.
 
-aws-console.py
---------------------------------------
-The aws-console.py script will launch a web browser to the AWS console using
-your (boto accessible) API credentials. It requires a special role in your
-account, it contains code to create the role for you. See command help.
-
 grant-aws-access
 ------------------
 This script will add your current IP to the security group for all ports. It
@@ -22,4 +16,9 @@ latest-ubuntu-ami.sh
 --------------------
 Shell snippet to get latest Ubuntu AMI. Handy for use with CI systems when you
 are automating building AMIs.
+
+aws_console.py
+--------------------------------------
+Moved to https://github.com/eikenb/aws-console
+
 
