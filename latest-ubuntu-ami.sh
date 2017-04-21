@@ -3,7 +3,6 @@
 # Simple shell script to fetch latest ubuntu AMI I find handy currently.
 # Probably still end up going to alestic.com, but for when I need to script it.
 
-
 name=$(\
     aws --region us-west-2 ec2 describe-images --owners 099720109477 \
         --filters Name=root-device-type,Values=ebs \
@@ -15,6 +14,6 @@ name=$(\
 ami_id=$(\
     aws --region us-west-2 ec2 describe-images --owners 099720109477 \
         --filters Name=name,Values="$name" \
-    | awk -F ': ' '/"ImageId"/ { print $2 }' | tr -d '",')
+        --query "Images[0].ImageId" --output "text")
 
 echo "Latest AMI: $ami_id"
