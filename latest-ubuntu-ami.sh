@@ -8,7 +8,7 @@ name=$(\
     aws --region us-west-2 ec2 describe-images --owners 099720109477 \
         --filters Name=root-device-type,Values=ebs \
             Name=architecture,Values=x86_64 \
-            Name=name,Values='*hvm-ssd/ubuntu-trusty-14.04*' \
+            Name=name,Values='*hvm-ssd/ubuntu-xenial-16.04-amd64*' \
     | awk -F ': ' '/"Name"/ { print $2 | "sort" }' \
     | tr -d '",' | tail -1)
 
