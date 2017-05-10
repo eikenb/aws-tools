@@ -16,4 +16,4 @@ ami_id=$(\
         --filters Name=name,Values="$name" \
         --query "Images[0].ImageId" --output "text")
 
-echo "Latest AMI: $ami_id"
+echo "$ami_id"
